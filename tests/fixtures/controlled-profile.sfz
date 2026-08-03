@@ -1,0 +1,19 @@
+// Project-authored synthetic fixture for the SHR controlled SFZ profile.
+<global>
+global_label=Controlled Fixture
+ampeg_attack=0.01 ampeg_decay=0.20 ampeg_sustain=65 ampeg_release=0.30
+
+<group>
+group_label=Main Layer
+
+<region>
+sample=tone.wav
+lokey=36 hikey=60 lovel=1 hivel=80 pitch_keycenter=48
+transpose=1 tune=-7 volume=-3.5 pan=-25
+offset=2 end=60
+loop_mode=loop_sustain loop_start=10 loop_end=40
+
+<region>
+sample=tone.wav
+key=72 lovel=81 hivel=127
+loop_mode=one_shot

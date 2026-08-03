@@ -1,0 +1,22 @@
+[package]
+name = "shr-sampler"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Headless JACK/ALSA host and offline tools for SHR sample instruments"
+publish = false
+
+[dependencies]
+alsa.workspace = true
+libc.workspace = true
+signal-hook.workspace = true
+shr-sampler-core = { path = "../shr-sampler-core", version = "=0.1.1" }
+
+[dev-dependencies]
+assert_no_alloc = "1.1.2"
+hound.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+tempfile = "3.24.0"
