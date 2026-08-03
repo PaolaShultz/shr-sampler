@@ -7,6 +7,7 @@ use shr_sampler_core::{
 use std::path::Path;
 
 pub const USAGE: &str = r#"Usage:
+  shr-sampler --version
   shr-sampler --client-name NAME --instrument /path/to/file.shrinst
   shr-sampler validate <instrument.shrinst>
   shr-sampler import-sfz <input.sfz> <output.shrinst> --instrument-id ID --name NAME --author TEXT --source TEXT --licence TEXT [--attribution TEXT] [--notes TEXT] [--max-polyphony 1..64]
@@ -27,6 +28,9 @@ where
 {
     match args.first().map(String::as_str) {
         Some("--help" | "-h") if args.len() == 1 => Ok(USAGE.into()),
+        Some("--version" | "-V") if args.len() == 1 => {
+            Ok(format!("shr-sampler {}", env!("CARGO_PKG_VERSION")))
+        }
         Some("--client-name") => live_command(&args, live_host),
         Some("validate") if args.len() == 2 => validate(&args[1]),
         Some("import-sfz") if args.len() >= 3 => import(&args[1..]),
@@ -272,6 +276,15 @@ fn parse_finite(
 mod tests {
     use super::*;
     use std::cell::Cell;
+
+    #[test]
+    fn version_is_machine_readable_and_matches_the_package() {
+        assert_eq!(
+            run(vec!["--version".into()]).unwrap(),
+            format!("shr-sampler {}", env!("CARGO_PKG_VERSION"))
+        );
+        assert!(run(vec!["--version".into(), "extra".into()]).is_err());
+    }
 
     #[test]
     fn live_arguments_are_strictly_validated() {

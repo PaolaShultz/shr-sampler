@@ -12,7 +12,7 @@ publish = false
 alsa.workspace = true
 libc.workspace = true
 signal-hook.workspace = true
-shr-sampler-core = { path = "../shr-sampler-core", version = "=0.1.1" }
+shr-sampler-core = { path = "../shr-sampler-core", version = "=0.1.2" }
 
 [dev-dependencies]
 assert_no_alloc = "1.1.2"

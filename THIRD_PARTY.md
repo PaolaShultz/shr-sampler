@@ -1,7 +1,7 @@
 # Dependencies and licensing
 
 SHR Sampler source is MIT licensed. The locked dependency graph was inspected
-from Cargo package metadata during the 0.1.1 live-host milestone.
+from Cargo package metadata during the 0.1.2 integration milestone.
 
 Runtime dependencies are:
 
@@ -42,3 +42,12 @@ All committed fixtures are project-authored text. Tests synthesize their WAV
 input at runtime. A package author remains responsible for verifying and
 preserving the licence, attribution, and redistribution rights of imported
 sample libraries.
+
+## Public instrument content
+
+The only installable factory package is named by
+`instruments/cleared-instruments.txt`. `SHR Clear Tone` and its PCM waveform
+are project-authored for SHR Sampler and dedicated to the public domain under
+CC0-1.0. The generator uses only Python's standard library and mathematical
+sine functions; it contains no third-party sample, preset, recording, SFZ,
+proprietary format data, or converted library content.
