@@ -1,7 +1,7 @@
 # Live host architecture
 
-SHR Sampler 0.1.1 adds a Linux live-process boundary around the unchanged pure
-engine. This milestone is production-shaped software, not connected JACK,
+The Linux live-process boundary wraps the pure engine without moving package or
+render ownership into the host. Software validation is not connected JACK,
 ALSA, latency, polyphony, or audible evidence.
 
 ## Boundaries

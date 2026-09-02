@@ -16,6 +16,14 @@ or changing it. It exposes `out_l`, `out_r`, and one ALSA Sequencer MIDI port
 named `input`; it never auto-connects audio or opens ALSA audio. MIDI transfer,
 callback work, overflow recovery, faults, and shutdown are fixed and bounded.
 
+SHR-DAW starts this binary as one managed external instrument. SHR Sampler owns
+package validation, decoded samples, synthesis voices, the ALSA input, and
+stereo JACK outputs. SHR-DAW owns the exact compatibility pin, package
+preflight, command and route configuration, process identity, shutdown,
+replacement recovery, and Project state. `instruments/cleared-instruments.txt`
+owns this repository's public package catalog; SHR-DAW's installer copies only
+that cleared payload from its pinned revision.
+
 ## Build and use
 
 The workspace pins Rust 1.97.1.
