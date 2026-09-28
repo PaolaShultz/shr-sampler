@@ -1,40 +1,32 @@
+![SHR Sampler — sample waveform above piano keys](docs/assets/banner.svg)
+
 # SHR Sampler
 
-SHR Sampler is a separate sample-instrument engine for the SHR music system.
-It validates strict `.shrinst` packages, imports one controlled SFZ subset,
-renders deterministic stereo `f32` audio, writes offline WAV files, and runs as
-a headless JACK/ALSA instrument process managed by SHR-DAW.
+**Turn sample packages into a playable stereo instrument.** SHR Sampler loads
+`.shrinst` instruments, imports a controlled SFZ subset and runs as a headless
+JACK/ALSA companion to [SHR-DAW](https://github.com/PaolaShultz/shr-daw).
+It also validates packages and renders WAVs offline.
 
-The library loads and decodes every sample before constructing an engine.
-`Engine::render_block` then uses fixed voice storage and performs no allocation,
-locking, I/O, logging, formatting, or process work. Tests enforce exact idle
-silence, finite output, deterministic event behavior, stable voice stealing,
-and identical output across block sizes.
+[Build and use](#build-and-use) · [Package format](docs/NATIVE_PACKAGE_FORMAT.md) · [SFZ import](docs/SFZ_IMPORT_PROFILE.md) · [Live host](docs/LIVE_PROCESS_CONTRACT.md)
 
-The live host attaches dynamically to an existing JACK server without starting
-or changing it. It exposes `out_l`, `out_r`, and one ALSA Sequencer MIDI port
-named `input`; it never auto-connects audio or opens ALSA audio. MIDI transfer,
-callback work, overflow recovery, faults, and shutdown are fixed and bounded.
-
-SHR-DAW starts this binary as one managed external instrument. SHR Sampler owns
-package validation, decoded samples, synthesis voices, the ALSA input, and
-stereo JACK outputs. SHR-DAW owns the exact compatibility pin, package
-preflight, command and route configuration, process identity, shutdown,
-replacement recovery, and Project state. `instruments/cleared-instruments.txt`
-owns this repository's public package catalog; SHR-DAW's installer copies only
-that cleared payload from its pinned revision.
+- **Prepare before playback:** sample decoding happens before the render loop.
+- **Keep packages portable:** strict paths, metadata and validation define each instrument.
+- **Start with a cleared sound:** the repository includes the small CC0 SHR Clear Tone instrument.
 
 ## Build and use
 
 The workspace pins Rust 1.97.1.
 
 ```sh
-cargo build --locked
-cargo run --locked -p shr-sampler -- --version
-cargo run --locked -p shr-sampler -- --client-name shr-sampler \
+cargo build --locked --release -p shr-sampler
+target/release/shr-sampler --version
+target/release/shr-sampler validate instruments/shr-clear-tone.shrinst
+mkdir -p artifacts
+target/release/shr-sampler render instruments/shr-clear-tone.shrinst artifacts/clear-tone.wav
+
+# Live use requires an existing JACK server.
+target/release/shr-sampler --client-name shr-sampler \
   --instrument instruments/shr-clear-tone.shrinst
-cargo run --locked -p shr-sampler -- validate path/to/piano.shrinst
-cargo run --locked -p shr-sampler -- render path/to/piano.shrinst artifacts/piano.wav
 ```
 
 Import deliberately profiled SFZ produced offline by ConvertWithMoss or another
@@ -77,3 +69,29 @@ cargo run --locked -p shr-sampler -- validate \
 
 Generated audition and evidence audio belongs below ignored `artifacts/` and is
 disposable. Tests generate only project-authored synthetic material.
+
+<details>
+<summary>Engine and SHR-DAW integration details</summary>
+
+The library loads and decodes every sample before constructing an engine.
+`Engine::render_block` then uses fixed voice storage and performs no allocation,
+locking, I/O, logging, formatting, or process work. Tests enforce exact idle
+silence, finite output, deterministic event behavior, stable voice stealing,
+and identical output across block sizes.
+
+The live host attaches dynamically to an existing JACK server without starting
+or changing it. It exposes `out_l`, `out_r`, and one ALSA Sequencer MIDI port
+named `input`; it never auto-connects audio or opens ALSA audio. MIDI transfer,
+callback work, overflow recovery, faults, and shutdown are fixed and bounded.
+
+SHR-DAW starts this binary as one managed external instrument. SHR Sampler owns
+package validation, decoded samples, synthesis voices, the ALSA input, and
+stereo JACK outputs. SHR-DAW owns the exact compatibility pin, package
+preflight, command and route configuration, process identity, shutdown,
+replacement recovery, and Project state. `instruments/cleared-instruments.txt`
+owns this repository's public package catalog; SHR-DAW's installer copies only
+that cleared payload from its pinned revision.
+
+</details>
+
+[MIT license](LICENSE) · [Third-party notices](THIRD_PARTY.md)
