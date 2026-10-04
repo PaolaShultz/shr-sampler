@@ -95,3 +95,9 @@ that cleared payload from its pinned revision.
 </details>
 
 [MIT license](LICENSE) · [Third-party notices](THIRD_PARTY.md)
+
+## GigPies integration planning — 2026-10-04
+
+[Owning GigPies plan](docs/plans/GIGPIES_IMPLEMENTATION.md) records scoped tasks, contract dependencies,
+validation and launch instructions. This is planned work; existing implementation
+and hardware status above are unchanged.
