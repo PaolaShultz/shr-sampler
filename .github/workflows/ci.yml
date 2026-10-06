@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_INCREMENTAL: 0
+  CARGO_BUILD_JOBS: 1
+  PYTHONDONTWRITEBYTECODE: 1
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install Linux development dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y pkg-config libasound2-dev
+      - name: Install exact Rust toolchain
+        run: |
+          rustup toolchain install 1.97.1 --profile minimal --component rustfmt
+          rustc +1.97.1 -vV
+      - name: Formatting
+        run: |
+          cargo +1.97.1 fmt --all -- --check
+      - name: Locked check
+        run: |
+          cargo +1.97.1 check --locked --all-targets --workspace
+      - name: Normal offline tests
+        run: |
+          cargo +1.97.1 test --locked --all-targets --workspace -- --test-threads=1
+      - name: Verify cleared synthetic factory instrument
+        run: |
+          python3 scripts/generate_factory_instruments.py --check
